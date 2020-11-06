@@ -30,7 +30,7 @@ void KalmanFilter::Predict() {
   //predict equations
   x_ = F_*x_;
   MatrixXd Ft = F_.transpose();
-  P_ = F_*P_*Ft+Q_;
+  P_ = F_*P_*Ft + Q_;
 
 }
 
@@ -53,8 +53,12 @@ void KalmanFilter::UpdateEKF(const VectorXd &z)
   double vx = x_(2);
   double vy = x_(3);
   double rho = sqrt(px*px + py*py);
+  if(rho<0.0001)
+  {
+    rho  = 0.0001;
+  }
   double fi = atan2(py,px);
-  double rho_rate = px*vx + py*vy/rho;
+  double rho_rate = (px*vx + py*vy)/rho;
   hx << rho,fi,rho_rate;
   VectorXd y = z - hx;
   //normalizing the angle to be in the range of -pi to pi
@@ -82,7 +86,7 @@ void KalmanFilter::y_update(const VectorXd& y)
   MatrixXd s = H_*P_*HT + R_;
   MatrixXd si = s.inverse();
   MatrixXd K = P_*HT*si; // kalman gain
-  x_ = x_ + K*y; // updating the state based on the kalman gain weighing , it weights based on the relative uncertainity between estimate and measurement
+  x_ = x_ + K*y; // updating the state based on the kalman gain weighing , it weights based on the relative uncertainity between estimat and measurement
   //updating the previous process covariance matrix 
   long x_size = x_.size();
   MatrixXd I = MatrixXd::Identity(x_size, x_size);
