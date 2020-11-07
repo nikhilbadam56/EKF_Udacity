@@ -61,17 +61,16 @@ MatrixXd Tools::CalculateJacobian(const VectorXd& x_state) {
   double vx = x_state(2);
   double vy = x_state(3);
   double dist = px*px + py*py;
-  if(dist<0.0001)
+  if(dist < .0001)
   {
-    cout << "Distance Too Small ! exiting"<<endl;
-    return Hj_;
+    dist = 0.0001;
   }
   double dist_sqrt = sqrt(dist);
   double dist_3_2 = dist_sqrt*dist;
  
   //jacobian
-  Hj_<< (px/dist_sqrt),(py/dist_sqrt),0,0,
-  		-(py/dist), (px/dist),0,0,
-  		py*(vx*py - px*vy)/dist_3_2 , px*(vy*px - vx*py)/dist_3_2,(px/dist_sqrt),(py/dist_sqrt);
+  Hj_<<  (px/dist_sqrt) , (py/dist_sqrt) , 0 , 0 ,
+  		-(py/dist)      , (px/dist)      , 0 , 0,
+  		 (py*(vx*py - px*vy))/dist_3_2 , (px*(vy*px - vx*py))/dist_3_2 , (px/dist_sqrt) , (py/dist_sqrt);
   return Hj_;
 }
